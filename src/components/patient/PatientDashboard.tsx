@@ -4,6 +4,7 @@ import { PatientHomeTab } from './PatientHomeTab';
 import { MyMedicinesTab } from './MyMedicinesTab';
 import { RefillsTab } from './RefillsTab';
 import { ExpiryWarningTab } from './ExpiryWarningTab';
+import { SafeDisposalTab } from './SafeDisposalTab';
 import { PatientProfileTab } from './PatientProfileTab';
 import { PatientMedicineDetailModal } from './PatientMedicineDetailModal';
 import { patientService } from '../../services/patientService';
@@ -16,7 +17,8 @@ import {
   History, 
   CheckCircle2,
   Menu,
-  X
+  X,
+  ShieldCheck
 } from 'lucide-react';
 
 interface PatientDashboardProps {
@@ -52,6 +54,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
     { id: 'home', label: 'Today (Home)', icon: Sun },
     { id: 'my-medicines', label: 'My Medicines', icon: Pill },
     { id: 'refills', label: 'Refill Center', icon: RefreshCw, badge: '1 Due' },
+    { id: 'safe-disposal', label: 'Safe Disposal', icon: ShieldCheck, badge: 'Take-Back' },
     { id: 'expiry', label: 'Expiry & Take-Back', icon: AlertTriangle, badge: '1 Soon' },
     { id: 'history', label: 'Adherence Log', icon: History },
     { id: 'profile', label: 'Profile & Caregiver', icon: User },
@@ -137,6 +140,9 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({
           <RefillsTab
             onSelectMedicine={(med) => setSelectedMedicine(med)}
           />
+        )}
+        {activeTab === 'safe-disposal' && (
+          <SafeDisposalTab />
         )}
         {activeTab === 'expiry' && (
           <ExpiryWarningTab

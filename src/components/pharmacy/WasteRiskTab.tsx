@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { wasteService } from '../../services/wasteService';
 import { inventoryService } from '../../services/inventoryService';
+import { disposalService } from '../../services/disposalService';
 import { Medicine } from '../../types/inventory';
 import { StatusBadge } from '../common/StatusBadge';
 import { DemoIntelligenceBanner } from '../common/DemoIntelligenceBanner';
@@ -12,15 +13,23 @@ import {
   Truck, 
   ChevronRight, 
   Building2, 
-  AlertTriangle 
+  AlertTriangle,
+  ShieldCheck,
+  ArrowRight,
+  RefreshCw,
+  Flame,
+  CheckCircle2,
+  Info
 } from 'lucide-react';
 
 interface WasteRiskTabProps {
   onSelectMedicine: (med: Medicine) => void;
+  onNavigateTab?: (tab: string) => void;
 }
 
-export const WasteRiskTab: React.FC<WasteRiskTabProps> = ({ onSelectMedicine }) => {
+export const WasteRiskTab: React.FC<WasteRiskTabProps> = ({ onSelectMedicine, onNavigateTab }) => {
   const wasteItems = wasteService.getWasteRiskItems();
+  const loopAnalytics = disposalService.getWasteLoopAnalytics();
   const [selectedRiskLevel, setSelectedRiskLevel] = useState<'ALL' | 'CRITICAL' | 'HIGH' | 'MEDIUM'>('ALL');
 
   const totalAtRiskUnits = wasteItems.reduce((acc, i) => acc + i.potentialExcessUnits, 0);
@@ -86,6 +95,151 @@ export const WasteRiskTab: React.FC<WasteRiskTabProps> = ({ onSelectMedicine }) 
           <p className="text-[11px] text-[#3A9D74] font-semibold mt-0.5">Rebalance pipeline ready</p>
         </div>
 
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 6. WASTE INTELLIGENCE CONNECTION & FULL LIFECYCLE */}
+      {/* ========================================================================= */}
+      <div className="bg-[#FFFFFF] rounded-card border border-[#668096]/15 shadow-subtle p-5 sm:p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#668096]/15">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[10px] font-extrabold text-[#087E8B] uppercase tracking-wider">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Full Lifecycle Tracking Architecture</span>
+            </div>
+            <h3 className="font-heading text-base font-bold text-[#16324F]">
+              Medicine Waste Lifecycle & Custody Flow
+            </h3>
+            <p className="text-xs text-[#668096]">
+              MedEasy tracks the full medicine journey rather than stopping at prediction.
+            </p>
+          </div>
+          {onNavigateTab && (
+            <button
+              type="button"
+              onClick={() => onNavigateTab('disposal')}
+              className="px-3.5 py-1.5 rounded-btn bg-[#EAF7F6] text-[#087E8B] hover:bg-[#087E8B] hover:text-white border border-[#7CC9C3]/40 text-xs font-bold transition-all flex items-center gap-1.5 self-start sm:self-auto"
+            >
+              <span>Manage Reverse Logistics</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {/* 5-STAGE LIFECYCLE TRACKER (Exact requirement) */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-1">
+          {[
+            { step: '01', title: 'AT RISK', desc: 'Predicted surplus before expiry', color: 'border-[#E9A23B] bg-[#E9A23B]/5 text-[#E9A23B]' },
+            { step: '02', title: 'UNUSED / EXPIRED', desc: 'Confirmed unusable or retired', color: 'border-[#D95D5D] bg-[#D95D5D]/5 text-[#D95D5D]' },
+            { step: '03', title: 'COLLECTION', desc: 'Secure take-back box or courier', color: 'border-[#087E8B] bg-[#087E8B]/5 text-[#087E8B]' },
+            { step: '04', title: 'AUTHORIZED PROCESSING', desc: 'Certified thermal neutralization', color: 'border-[#12A4A6] bg-[#12A4A6]/5 text-[#12A4A6]' },
+            { step: '05', title: 'COMPLETED', desc: 'Audited closed-loop certificate', color: 'border-[#3A9D74] bg-[#3A9D74]/5 text-[#3A9D74]' },
+          ].map((s, idx) => (
+            <div key={idx} className={`p-3 rounded-xl border ${s.color} space-y-1`}>
+              <div className="flex items-center justify-between text-[10px] font-extrabold opacity-80">
+                <span>STAGE {s.step}</span>
+                {idx < 4 && <ArrowRight className="w-3 h-3 hidden sm:block" />}
+              </div>
+              <h4 className="font-heading font-bold text-xs">{s.title}</h4>
+              <p className="text-[10px] opacity-80 leading-tight">{s.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* 3 Clear State Distinctions */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+          <div className="p-3 rounded-xl bg-[#F6FAFA] border border-[#668096]/15 space-y-1">
+            <span className="font-bold text-[#E9A23B] flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5" /> PREDICTED WASTE
+            </span>
+            <p className="text-[11px] text-[#668096]">
+              Medicine that is currently at risk of becoming waste due to inventory exceeding projected demand before expiry.
+            </p>
+          </div>
+
+          <div className="p-3 rounded-xl bg-[#F6FAFA] border border-[#668096]/15 space-y-1">
+            <span className="font-bold text-[#D95D5D] flex items-center gap-1.5">
+              <AlertTriangle className="w-3.5 h-3.5" /> ACTUAL WASTE
+            </span>
+            <p className="text-[11px] text-[#668096]">
+              Medicine that has passed its expiration date, suffered cold-chain damage, or was retired due to treatment changes.
+            </p>
+          </div>
+
+          <div className="p-3 rounded-xl bg-[#F6FAFA] border border-[#668096]/15 space-y-1">
+            <span className="font-bold text-[#087E8B] flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5" /> DISPOSED
+            </span>
+            <p className="text-[11px] text-[#668096]">
+              Medicine that has safely entered an authorized take-back or high-temperature destruction workflow with chain-of-custody proof.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 7. WASTE ANALYTICS: "Closing the waste loop" */}
+      {/* ========================================================================= */}
+      <div className="bg-[#FFFFFF] rounded-card border border-[#668096]/15 shadow-subtle p-5 sm:p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[10px] font-bold text-[#3A9D74] uppercase tracking-wider">
+              <RefreshCw className="w-3 h-3" />
+              <span>Closed-Loop Analytics</span>
+            </div>
+            <h3 className="font-heading text-base font-bold text-[#16324F]">
+              Closing the waste loop
+            </h3>
+            <p className="text-xs text-[#668096]">
+              Quantifying waste prevention, safe recovery, and authorized take-back completion.
+            </p>
+          </div>
+          <span className="text-xs font-bold text-[#087E8B] bg-[#EAF7F6] px-3 py-1 rounded-full border border-[#7CC9C3]/30">
+            Audit Period: 2026 Q3 Live
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="p-4 rounded-xl bg-[#F6FAFA] border border-[#668096]/15">
+            <span className="text-xs font-semibold text-[#668096]">Units Identified At Risk</span>
+            <p className="font-heading text-2xl font-bold text-[#16324F] mt-1">
+              {loopAnalytics.unitsIdentifiedAtRisk.toLocaleString()}
+            </p>
+            <p className="text-[11px] text-[#668096] mt-0.5">Identified &gt; 45 days before expiry</p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#F6FAFA] border border-[#668096]/15">
+            <span className="text-xs font-semibold text-[#668096]">Units Recovered from Waste</span>
+            <p className="font-heading text-2xl font-bold text-[#3A9D74] mt-1">
+              {loopAnalytics.unitsRecoveredFromWaste.toLocaleString()}
+            </p>
+            <p className="text-[11px] text-[#3A9D74] font-medium mt-0.5">Rebalanced before expiration</p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#F6FAFA] border border-[#668096]/15">
+            <span className="text-xs font-semibold text-[#668096]">Units Sent for Disposal</span>
+            <p className="font-heading text-2xl font-bold text-[#087E8B] mt-1">
+              {loopAnalytics.unitsSentForDisposal.toLocaleString()}
+            </p>
+            <p className="text-[11px] text-[#668096] mt-0.5">Entered authorized take-back</p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#F6FAFA] border border-[#668096]/15">
+            <span className="text-xs font-semibold text-[#668096]">Disposal Completion Rate</span>
+            <p className="font-heading text-2xl font-bold text-[#16324F] mt-1">
+              {loopAnalytics.disposalCompletionRate}%
+            </p>
+            <p className="text-[11px] text-[#3A9D74] font-semibold mt-0.5">237 / 252 units verified destroyed</p>
+          </div>
+        </div>
+
+        {/* IMPORTANT PROMPT DISCLAIMER */}
+        <div className="p-3 bg-[#EEF5FA] rounded-xl border border-[#668096]/15 flex items-start gap-2.5 text-xs text-[#16324F]">
+          <Info className="w-4 h-4 text-[#087E8B] shrink-0 mt-0.5" />
+          <p className="leading-relaxed">
+            <strong>Environmental Accounting Note:</strong> Recovery does not mean all medicine is redistributed or reused. In clinical waste accounting, recovery means that at-risk and expired pharmaceuticals were proactively intercepted and prevented from entering inappropriate waste streams (such as domestic sewage or municipal landfills).
+          </p>
+        </div>
       </div>
 
       {/* WASTE RISK TABLE & EXPLAINABLE CARDS */}

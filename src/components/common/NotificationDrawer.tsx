@@ -25,6 +25,7 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
     { id: 'DEMAND_SPIKE', label: 'Demand' },
     { id: 'EXPIRY_APPROACHING', label: 'Expiry' },
     { id: 'WASTE_RISK', label: 'Waste' },
+    { id: 'SAFE_DISPOSAL', label: 'Safe Disposal' },
   ];
 
   const filtered = alerts.filter(a => activeCategory === 'ALL' || a.category === activeCategory);

@@ -10,6 +10,7 @@ import { PatientsTab } from './PatientsTab';
 import { AlertsTab } from './AlertsTab';
 import { ReportsTab } from './ReportsTab';
 import { SettingsTab } from './SettingsTab';
+import { DisposalManagementTab } from './DisposalManagementTab';
 import { MedicineDetailDrawer } from './MedicineDetailDrawer';
 import { 
   LayoutDashboard, 
@@ -25,7 +26,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
-  X
+  X,
+  ShieldCheck
 } from 'lucide-react';
 
 interface PharmacyDashboardProps {
@@ -63,6 +65,7 @@ export const PharmacyDashboard: React.FC<PharmacyDashboardProps> = ({
     { id: 'inventory', label: 'Inventory', icon: Package },
     { id: 'demand', label: 'Demand', icon: TrendingUp },
     { id: 'waste', label: 'Waste Risk', icon: Trash2 },
+    { id: 'disposal', label: 'Disposal Mgmt', icon: ShieldCheck, badge: '5' },
     { id: 'expiry', label: 'Expiry', icon: CalendarClock },
     { id: 'locations', label: 'Locations', icon: MapPin },
     { id: 'patients', label: 'Patients', icon: Users },
@@ -240,6 +243,9 @@ export const PharmacyDashboard: React.FC<PharmacyDashboardProps> = ({
         )}
         {activeTab === 'waste' && (
           <WasteRiskTab onSelectMedicine={(med) => setSelectedMedicine(med)} />
+        )}
+        {activeTab === 'disposal' && (
+          <DisposalManagementTab />
         )}
         {activeTab === 'expiry' && (
           <ExpiryTab onSelectMedicine={(med) => setSelectedMedicine(med)} />

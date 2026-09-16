@@ -3,7 +3,8 @@ export type AlertCategory =
   | 'WASTE_RISK'
   | 'EXPIRY_APPROACHING'
   | 'DEMAND_SPIKE'
-  | 'UNUSUAL_CONSUMPTION';
+  | 'UNUSUAL_CONSUMPTION'
+  | 'SAFE_DISPOSAL';
 
 export type AlertSeverity = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'INFO';
 
